@@ -1,0 +1,68 @@
+version: "3.3"
+
+services:
+
+  traefik:
+    image: "traefik:v2.5.1"
+    container_name: "traefik"
+    command:
+      #- "--log.level=DEBUG"
+      #- "--api.insecure=true"
+      # - --api=true
+      # - --api.dashboard=true
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.dnschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.dnschallenge.provider=cloudflare"
+      #- "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.myresolver.acme.email=<email@example.com>"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    environment:
+      - "CF_API_EMAIL=<email@example.com>"
+      - "CF_API_KEY=<apikey>"
+    volumes:
+      - "./letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+  wordpress:
+    image: docker.io/bitnami/wordpress:6
+    user: root
+    depends_on:
+      - mariadb
+    restart: always
+    volumes:
+       - './wordpress_data:/bitnami/wordpress'
+    environment:
+      - WORDPRESS_DATABASE_HOST=mariadb
+      - WORDPRESS_DATABASE_PORT_NUMBER=3306
+      - WORDPRESS_DATABASE_USER=<user>
+      - WORDPRESS_DATABASE_PASSWORD=<password1>
+      - WORDPRESS_DATABASE_NAME=<db_wordpress>
+#      - ALLOW_EMPTY_PASSWORD=yes
+      - WORDPRESS_SMTP_HOST=smtp.gmail.com
+      - WORDPRESS_SMTP_PORT=587
+      - WORDPRESS_SMTP_USER=your_email@gmail.com
+      - WORDPRESS_SMTP_PASSWORD=your_password
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.wordpress.rule=Host(`<examplewebsite.com>`)
+      - "traefik.http.routers.wordpress.entrypoints=websecure"
+      - "traefik.http.routers.wordpress.tls.certresolver=myresolver"
+    depends_on:
+      - mariadb
+  mariadb:
+    image: docker.io/bitnami/mariadb:10.6
+    user: root
+    restart: always
+    volumes:
+      - ./database:/bitnami/mariadb
+    environment:
+      - MARIADB_USER=vida
+      - MARIADB_DATABASE=<db_wordpress>
+      - MARIADB_ROOT_PASSWORD=<password2>
+      - MARIADB_PASSWORD=<password1>
