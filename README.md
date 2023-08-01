@@ -1,10 +1,10 @@
 ### Run Traefik V2, Wordpress, MariaDB using Cloudflare Full SSL/TLS encryption mode in a simple single Docker Compose  
 
-Install docker and docker compose  
+Install [Docker](https://github.com/buzzkillb/wordpress_docker/tree/main#install-docker-ubuntu-2204) and [Docker Compose](https://github.com/buzzkillb/wordpress_docker/tree/main#install-docker-ubuntu-2204)   
 
 copy **docker-compose.yml** to a folder like ~/wordpress-compose  
 
-Replace letsencrypt email, cloudflare email / global_apikey, wordpress user/passwords/database, mariadb user/passwords, make sure **_password1_** matches on both containers.  Example shows how to use root user for Bitnami containers, otherwise the containers use UUID 1001.
+Replace letsencrypt email, cloudflare email / global_apikey, wordpress user/passwords/database, mariadb user/passwords, make sure **_password1_** matches on both containers.  Example Gmail SMTP Password, use https://help.accredible.com/smtp-setup-in-gmail-inbox to generate appPassword. Example shows how to use root user for Bitnami containers, otherwise the containers use UUID 1001.
 
 To run  
 ```
