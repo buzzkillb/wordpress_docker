@@ -53,8 +53,6 @@ services:
       - traefik.http.routers.wordpress.rule=Host(`<examplewebsite.com>`)
       - "traefik.http.routers.wordpress.entrypoints=websecure"
       - "traefik.http.routers.wordpress.tls.certresolver=myresolver"
-    depends_on:
-      - mariadb
   mariadb:
     image: docker.io/bitnami/mariadb:10.6
     user: root
@@ -62,7 +60,7 @@ services:
     volumes:
       - ./database:/bitnami/mariadb
     environment:
-      - MARIADB_USER=vida
+      - MARIADB_USER=<user>
       - MARIADB_DATABASE=<db_wordpress>
       - MARIADB_ROOT_PASSWORD=<password2>
       - MARIADB_PASSWORD=<password1>
